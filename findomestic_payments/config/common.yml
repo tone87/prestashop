@@ -1,0 +1,29 @@
+services:
+  _defaults:
+    public: trueFI
+  findomestic_payments_configuration_factory:
+      class: PrestaShop\Module\findomestic_payments\Factory\FPUrlFactory
+      autowire: true
+      arguments:
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_MODE")'
+          - ['@findomestic_payment_configuration_live', '@findomestic_payment_configuration_sandbox']
+  findomestic_payment_configuration_live:
+      class: PrestaShop\Module\findomestic_payments\Configuration\FPUrlConfiguration
+      autowire: true
+      arguments:
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_URL")'
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TVEI")'
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_PRF")'
+  findomestic_payment_configuration_sandbox:
+      class: PrestaShop\Module\findomestic_payments\Configuration\FPUrlConfiguration
+      autowire: true
+      arguments:
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TEST_URL")'
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TEST_TVEI")'
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TEST_PRF")'
+  findomestic_payments_url_generator:
+      class: PrestaShop\Module\findomestic_payments\Service\FPUrlGenerator
+      autowire: true
+      arguments:
+          - '@findomestic_payments_configuration_factory'
+

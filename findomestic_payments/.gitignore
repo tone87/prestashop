@@ -1,0 +1,11 @@
+/vendor/
+/vendor/*
+!/vendor/composer/
+!/vendor/composer/*
+!/vendor/index.php
+!/vendor/autoload.php
+sonar-project.properties
+.php-cs-fixer.cache
+/.scannerwork/
+/tools/
+/tools/*

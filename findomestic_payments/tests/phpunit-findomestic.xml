@@ -1,0 +1,16 @@
+<phpunit stopOnFailure="false"
+         convertErrorsToExceptions="false"
+         convertNoticesToExceptions="false"
+         convertWarningsToExceptions="false"
+         processIsolation="true"
+>
+  <php>
+    <env name="_PS_IN_TEST_" value="1"/>
+  </php>
+
+  <testsuites>
+    <testsuite name="Findomestic">
+      <directory>Main</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
