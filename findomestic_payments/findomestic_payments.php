@@ -73,7 +73,7 @@ class findomestic_payments extends PaymentModule
         parent::__construct();
         $this->displayName = $this->trans('Findomestic Payments', [], 'Modules.findomestic_payments.Admin');
         $this->description = $this->trans('Adds a payment method.', [], 'Modules.findomestic_payments.Admin');
-        $this->ps_versions_compliancy = ['min' => '1.7.7.2', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
     }
 
 
