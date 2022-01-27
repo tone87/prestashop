@@ -53,13 +53,15 @@ class findomestic_paymentsUpdateModuleFrontController extends AbstractRestContro
             exit;
         }
 
-        if ($result != 1) {
-            $this->updateOrder($unencoded['id_order'], 8); // 8 is the default error order state for PRESTASHOP
+        PrestaShopLogger::addLog('FINDOMESTIC CALLBAK - PARAMETERS: ' . json_encode($_GET));
+        if ($result == 0) {
+            PrestaShopLogger::addLog('FINDOMESTIC CALLBAK - order pre accepted:  ' . $unencoded['id_order']);
+            $this->updateOrder($unencoded['id_order'], Configuration::get(findomestic_payments::FP_PREACCEPTED));
             echo 1;
             exit;
         }
-
-        $this->updateOrder($unencoded['id_order'], Configuration::get(findomestic_payments::FP_PREACCEPTED));
+        PrestaShopLogger::addLog('FINDOMESTIC CALLBAK - order error:  ' . $unencoded['id_order']);
+        $this->updateOrder($unencoded['id_order'], Configuration::get(findomestic_payments::FP_DENIED)); // 8 is the default error order state for PRESTASHOP
         echo 1;
         exit;
     }

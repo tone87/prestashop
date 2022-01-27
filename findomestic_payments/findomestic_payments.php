@@ -52,6 +52,8 @@ class findomestic_payments extends PaymentModule
 
     public const FP_WAITING = 'FP_WAITING_STATUS';
     public const FP_PREACCEPTED = 'FP_PREACCEPTED_STATUS';
+    public const FP_DENIED = 'FP_DENIED_STATUS';
+    public const FP_ACCEPTED = 'FP_ACCEPTED_STATUS';
 
 
     // INIT
@@ -494,6 +496,20 @@ class findomestic_payments extends PaymentModule
             }
 
             return Configuration::updateValue($status, (int)$order_state->id);
+        }else{
+            $order_state = new OrderState(Configuration::get($status));
+            $order_state->name = array();
+            foreach (Language::getLanguages() as $language) {
+                switch (Tools::strtolower($language['iso_code'])) {
+                    case 'it':
+                        $order_state->name[$language['id_lang']] = $languages['it'];
+                        break;
+                    default:
+                        $order_state->name[$language['id_lang']] = $languages['en'];
+                        break;
+                }
+            }
+            $order_state->update();
         }
         return true;
     }
@@ -507,8 +523,8 @@ class findomestic_payments extends PaymentModule
     public function addWaitingOrderStatus()
     {
         $languages = [
-            'it' => 'Findomestic Richiesta non completata',
-            'en' => 'Findomestic application not completed',
+            'it' => 'Findomestic Inserimento dati in corso',
+            'en' => 'Findomestic Awaiting data compilation',
         ];
         return $this->addOrderStatus(self::FP_WAITING, $languages, '#c9c567');
     }
@@ -522,10 +538,41 @@ class findomestic_payments extends PaymentModule
     public function addPreAcceptedStatus()
     {
         $languages = [
-            'it' => 'Findomestic in valutazione',
-            'en' => 'Findomestic analysis',
+            'it' => 'Findomestic Richiesta in valutazione',
+            'en' => 'Findomestic request under scrutiny',
         ];
         return $this->addOrderStatus(self::FP_PREACCEPTED, $languages, '#34209E');
+    }
+
+    /**
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * adds a new order status "Awaiting for Findomestic payment", the code is pretty much mandatory for prestashop
+     */
+    public function addDeniedOrderStatus()
+    {
+        $languages = [
+            'it' => 'Findomestic Richiesta non accolta',
+            'en' => 'Findomestic Request denied',
+        ];
+        return $this->addOrderStatus(self::FP_DENIED, $languages, '#E74C3C');
+    }
+
+
+    /**
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     *
+     * adds a new order status "Awaiting for Findomestic payment", the code is pretty much mandatory for prestashop
+     */
+    public function addAcceptedOrderStatus()
+    {
+        $languages = [
+            'it' => 'Findomestic Richiesta accolta',
+            'en' => 'Findomestic Request accepted',
+        ];
+        return $this->addOrderStatus(self::FP_ACCEPTED, $languages, '#01B887');
     }
 
 
@@ -539,6 +586,9 @@ class findomestic_payments extends PaymentModule
     {
         if ($this->addPreAcceptedStatus()
             && $this->addWaitingOrderStatus()
+            && $this->addAcceptedOrderStatus()
+            && $this->addDeniedOrderStatus()
+
         ) {
             return true;
         }

@@ -61,6 +61,8 @@ class findomestic_paymentsRedirectModuleFrontController extends ModuleFrontContr
             $findomestic_url = $service->getWebAppUrl($amount, false, $this->context->cart->id, $user_data, $redirect_url, $callback_url);
 
             // https://b2ctest.ecredit.it/clienti/pmcrs/eprice/mcommerce/pages/simulatore.html?tvei=123123&prf=7079&nomeCliente=TEST&cognomeCliente=Doing&emailCliente=francesco.mura@doing.com&importo=38940&cartId=6&urlRedirect=http://localhost/en/fp/return?encoded=key:9209b2cb631d5115828591fecde44c65-id_order:6-id_cart:6-id_module:70&callBackUrl=http://localhost/en/fp/update?encoded=key:9209b2cb631d5115828591fecde44c65-id_order:6
+
+            PrestaShopLogger::addLog('FINDOMESTIC REDIRECT - URL: ' . $findomestic_url);
             Tools::redirect($findomestic_url);
         } else {
             // TODO:: HANDLE ERROR

@@ -53,8 +53,9 @@ class findomestic_paymentsRespondModuleFrontController extends AbstractRestContr
             exit;
         }
 
-
+        PrestaShopLogger::addLog('FINDOMESTIC USER RETURN - PARAMETERS: ' . json_encode($_GET));
         if ($result != 'OK') {
+            PrestaShopLogger::addLog('FINDOMESTIC USER RETURN -  KO: ' . $unencoded['id_order']);
             $this->setTemplate('module:findomestic_payments/views/templates/front/order-confirmation-failed-17.tpl'); // VERSION 17 is currently the only compatible version
             $this->context->smarty->assign(array(
                 'stripe_order_url' => $this->context->link->getPageLink('order')
@@ -63,7 +64,7 @@ class findomestic_paymentsRespondModuleFrontController extends AbstractRestContr
             return;
         }
 
-
+        PrestaShopLogger::addLog('FINDOMESTIC USER RETURN -  OK: ' . $unencoded['id_order']);
         $langs = Language::getLanguages(true, $this->context->shop->id);
         $url_lang = '';
         if (count($langs) > 1) {
