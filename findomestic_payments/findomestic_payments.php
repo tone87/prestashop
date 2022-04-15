@@ -41,11 +41,18 @@ class findomestic_payments extends PaymentModule
     public const TEST_TVEI = 'FINDOMESTIC_TEST_TVEI';
     public const PRF = 'FINDOMESTIC_PRF';
     public const TEST_PRF = 'FINDOMESTIC_TEST_PRF';
+    public const COD_FIN = 'FINDOMESTIC_COD_FIN';
+    public const TEST_COD_FIN = 'FINDOMESTIC_TEST_COD_FIN';
     public const URL = 'FINDOMESTIC_URL';
     public const TEST_URL = 'FINDOMESTIC_TEST_URL';
     public const MIN = 'FINDOMESTIC_MIN';
     public const PRODUCT_BUTTON = 'FINDOMESTIC_PRODUCT_BUTTON';
     public const CART_BUTTON = 'FINDOMESTIC_CART_BUTTON';
+
+    public const LOGO_COLOR = 'FINDOMESTIC_LOGO_COLOR';
+    public const ICON_COLOR = 'FINDOMESTIC_ICON_COLOR';
+
+    public const LEGAL_TEXT = 'FINDOMESTIC_LEGAL_TEXT';
 
     public const RETURN_PATH = 'fp/return';
     public const UPDATE_PATH = 'fp/update';
@@ -67,7 +74,7 @@ class findomestic_payments extends PaymentModule
     {
         $this->name = 'findomestic_payments';
         $this->tab = 'payments_gateways';
-        $this->version = '0.1.0';
+        $this->version = '1.0.1';
         $this->author = 'Doing';
 
         //$this->controllers = array('confirmation');
@@ -93,7 +100,8 @@ class findomestic_payments extends PaymentModule
             'paymentOptions',
             'displayOrderConfirmation',
             'moduleRoutes',
-            'displayHeader'
+            'displayHeader',
+            'displayFooterAfter'
         ];
         if (parent::install()
             && $this->registerHook($hook)
@@ -117,11 +125,43 @@ class findomestic_payments extends PaymentModule
      */
     public function isConfigured()
     {
-        if (!Configuration::updateValue(self::FP_ACTIVE, 1) || !Configuration::updateValue(self::MODE, 1) || !Configuration::updateValue(self::MIN, 0) || !Configuration::updateValue(self::CART_BUTTON, 1) || !Configuration::updateValue(self::PRODUCT_BUTTON, 1)) {
+
+        if (
+               !Configuration::updateValue(self::FP_ACTIVE, 0)
+            || !Configuration::updateValue(self::MODE, 1)
+            || !Configuration::updateValue(self::MIN, 0)
+            || !Configuration::updateValue(self::CART_BUTTON, 1)
+            || !Configuration::updateValue(self::PRODUCT_BUTTON, 1)
+            || !Configuration::updateValue(self::LOGO_COLOR, 0) || !Configuration::updateValue(self::ICON_COLOR, 0)
+        ) {
             $this->_errors[] = $this->l('Si è verificato un errore durante l\'installazione del modulo.');
             return false;
         }
         return true;
+    }
+
+    public function hookDisplayFooterAfter($params){
+        if (Configuration::get(self::LEGAL_TEXT) == '' || Configuration::get(self::FP_ACTIVE) != 1) {
+            return '';
+        }
+
+        if ($this->checkSettings()) {
+            return $this->footerLegalDisclaimer();
+        }
+    }
+
+    /**
+     * @param $cart
+     * @return false|string
+     * @throws SmartyException
+     *
+     * this function recovers the link to the findomestic simulator with the full cart price.
+     */
+    public function footerLegalDisclaimer()
+    {
+        $this->context->smarty->assign('text', Configuration::get(self::LEGAL_TEXT));
+
+        return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/footer-legal-text.tpl');
     }
 
 
@@ -173,12 +213,12 @@ class findomestic_payments extends PaymentModule
      */
     public function hookDisplayExpressCheckout($params)
     {
-        if (Configuration::get(self::CART_BUTTON) != 1 || Configuration::get(self::FP_ACTIVE) != 1) {
+        if (Configuration::get(self::CART_BUTTON) == 0 || Configuration::get(self::FP_ACTIVE) != 1) {
             return '';
         }
 
         if ($this->checkSettings()) {
-            return $this->cartSimulatorLink($params['cart']);
+            return $this->cartSimulatorLink($params['cart'], Configuration::get(self::CART_BUTTON));
         }
     }
 
@@ -189,10 +229,11 @@ class findomestic_payments extends PaymentModule
      *
      * this function recovers the link to the findomestic simulator with the full cart price.
      */
-    public function cartSimulatorLink($cart)
+    public function cartSimulatorLink($cart, $template)
     {
         $price = $cart->getordertotal();
         $min = Configuration::get(self::MIN);
+        $color = Configuration::get(self::LOGO_COLOR);
         if ($price < $min) {
             return; // exit if product price is too low
         }
@@ -202,11 +243,33 @@ class findomestic_payments extends PaymentModule
 
 
         $this->context->smarty->assign('info', $info);
+        $this->context->smarty->assign('color', $color);
         $this->context->smarty->assign('module_dir', _MODULE_DIR_ . '/findomestic_payments/');
-        return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/cart-simulator-link.tpl');
+
+        switch ($template) {
+            case 1:
+                return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/single-line--only-text.tpl');
+                break;
+            case 2:
+                return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/multiple-lines--only-text.tpl');
+                break;
+            default:
+                return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/single-line--only-text.tpl');
+                break;
+        }
     }
 
-
+    /**
+     * @param $params
+     * @return false|string
+     *
+     * hook for simulator link in product near price, not usable
+     */
+    public function hookDisplayProductPriceBlock ($params)
+    {
+        // NOT USABLE, applies to multiple points
+        //return $this->hookDisplayProductAdditionalInfo($params);
+    }
     /**
      * @param $params
      * @return false|string
@@ -215,14 +278,11 @@ class findomestic_payments extends PaymentModule
      */
     public function hookDisplayProductAdditionalInfo($params)
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
-        if (Configuration::get(self::PRODUCT_BUTTON) != 1 || Configuration::get(self::FP_ACTIVE) != 1) {
+        if (Configuration::get(self::PRODUCT_BUTTON) == 0 || Configuration::get(self::FP_ACTIVE) != 1) {
             return '';
         }
         if ($this->checkSettings()) {
-            return $this->productSimulatorLink($params['product']);
+            return $this->productSimulatorLink($params['product'], Configuration::get(self::PRODUCT_BUTTON));
         }
     }
 
@@ -235,11 +295,13 @@ class findomestic_payments extends PaymentModule
      *
      * this function recovers the link to the findomestic simulator with the single product price.
      */
-    private function productSimulatorLink($product)
+    private function productSimulatorLink($product, $template)
     {
         $product_obj = new Product($product->getId());
         $price = $product_obj->getPrice();
         $min = Configuration::get(self::MIN);
+        $color = Configuration::get(self::LOGO_COLOR);
+
         if ($price < $min) {
             return; // exit if product price is too low
         }
@@ -249,8 +311,20 @@ class findomestic_payments extends PaymentModule
         $info = array('url' => $service->getWebAppUrl($price, true));
 
         $this->context->smarty->assign('info', $info);
+        $this->context->smarty->assign('color', $color);
         $this->context->smarty->assign('module_dir', _MODULE_DIR_ . '/findomestic_payments/');
-        return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/product-simulator-link.tpl');
+        switch ($template) {
+            case 1:
+                return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/single-line--only-text.tpl');
+                break;
+            case 2:
+                return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/multiple-lines--only-text.tpl');
+                break;
+            default:
+                return $this->context->smarty->fetch('module:findomestic_payments/views/templates/hook/single-line--only-text.tpl');
+                break;
+        }
+
     }
 
 
@@ -297,11 +371,16 @@ class findomestic_payments extends PaymentModule
 
         $service = $this->context->controller->getContainer()->get('findomestic_payments_url_generator');
         $info = array('url' => $service->getWebAppUrl($cart->getordertotal(), true));
+        $color = Configuration::get(self::ICON_COLOR);
+        $logo = $color.'-icon.svg';
+
 
         $this->context->smarty->assign('info', $info);
+        $this->context->smarty->assign('color', $color);
 
         $externalOption->setCallToActionText($this->l('Finanziamento Findomestic'))
             ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true))
+            ->setModuleName('findomestic')
             ->setInputs([
                 'token' => [
                     'name' => 'module',
@@ -310,7 +389,7 @@ class findomestic_payments extends PaymentModule
                 ],
             ])
             ->setAdditionalInformation($this->context->smarty->fetch('module:findomestic_payments/views/templates/front/payment_infos.tpl'))
-            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/logo.png'));
+            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/'. $logo));
 
         return $externalOption;
     }
@@ -380,20 +459,23 @@ class findomestic_payments extends PaymentModule
     public function getContent()
     {
         if (Tools::isSubmit(self::MODE)) {
-            echo '<pre>';
-            echo Tools::getValue(self::TEST_TVEI);
-            echo '</pre>';
+            
             Configuration::updateValue(self::FP_ACTIVE, Tools::getValue(self::FP_ACTIVE));
             Configuration::updateValue(self::MODE, Tools::getValue(self::MODE));
             Configuration::updateValue(self::TVEI, Tools::getValue(self::TVEI));
             Configuration::updateValue(self::TEST_TVEI, Tools::getValue(self::TEST_TVEI));
             Configuration::updateValue(self::PRF, Tools::getValue(self::PRF));
             Configuration::updateValue(self::TEST_PRF, Tools::getValue(self::TEST_PRF));
+            Configuration::updateValue(self::COD_FIN, Tools::getValue(self::COD_FIN));
+            Configuration::updateValue(self::TEST_COD_FIN, Tools::getValue(self::TEST_COD_FIN));
             Configuration::updateValue(self::URL, Tools::getValue(self::URL));
             Configuration::updateValue(self::TEST_URL, Tools::getValue(self::TEST_URL));
             Configuration::updateValue(self::MIN, Tools::getValue(self::MIN));
             Configuration::updateValue(self::CART_BUTTON, Tools::getValue(self::CART_BUTTON));
             Configuration::updateValue(self::PRODUCT_BUTTON, Tools::getValue(self::PRODUCT_BUTTON));
+            Configuration::updateValue(self::LOGO_COLOR, Tools::getValue(self::LOGO_COLOR));
+            Configuration::updateValue(self::ICON_COLOR, Tools::getValue(self::ICON_COLOR));
+            Configuration::updateValue(self::LEGAL_TEXT, Tools::getValue(self::LEGAL_TEXT), true);
 
             //$this->_clearBlockcategoriesCache();
 
@@ -416,11 +498,16 @@ class findomestic_payments extends PaymentModule
                 'findomestic_test_tvei' => Configuration::get(self::TEST_TVEI),
                 'findomestic_prf' => Configuration::get(self::PRF),
                 'findomestic_test_prf' => Configuration::get(self::TEST_PRF),
+                'findomestic_cod_fin' => Configuration::get(self::COD_FIN),
+                'findomestic_test_cod_fin' => Configuration::get(self::TEST_COD_FIN),
                 'findomestic_url' => Configuration::get(self::URL),
                 'findomestic_test_url' => Configuration::get(self::TEST_URL),
                 'findomestic_min' => Configuration::get(self::MIN),
                 'findomestic_product_button' => Configuration::get(self::PRODUCT_BUTTON),
                 'findomestic_cart_button' => Configuration::get(self::CART_BUTTON),
+                'findomestic_logo_color' => Configuration::get(self::LOGO_COLOR),
+                'findomestic_icon_color' => Configuration::get(self::ICON_COLOR),
+                'findomestic_legal_text' => Configuration::get(self::LEGAL_TEXT),
             )
         );
 

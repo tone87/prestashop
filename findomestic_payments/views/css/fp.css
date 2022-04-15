@@ -36,3 +36,109 @@
 .findomestic-simulator .btn:focus{
   background-color: #008A43;
 }
+
+
+
+/* ONLY TEXT STYLES */
+
+
+.findomestic-simulator--single-line--only-text{
+  display: flex!important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  padding: 30px 0;
+
+}
+
+.findomestic-simulator--single-line--only-text .text{
+  text-align: left !important;
+  margin-right: 15px;
+  font-size: 16px;
+}
+.findomestic-simulator--single-line--only-text .text img{
+  width: 100px !important;
+}
+
+.findomestic-simulator--single-line--only-text .link{
+  text-align: left !important;
+  flex: 25% !important;
+  font-size: 16px !important;
+}
+
+.findomestic-simulator--multiple-lines--only-text{
+  padding: 30px 0 !important;
+  text-align: left !important;
+}
+.findomestic-simulator--multiple-lines--only-text .text{
+  text-align: left !important;
+  margin-right: 15px !important;
+  font-size: 16px !important;
+  margin-bottom: 15px !important;
+}
+.findomestic-simulator--multiple-lines--only-text .text img{
+  width: 98px !important;
+}
+
+.findomestic-simulator--multiple-lines--only-text .link{
+  font-size: 16px !important;
+}
+.findomestic-info-green .link .findomestic-view-simulator{
+
+}
+.findomestic-info-negative .link .findomestic-view-simulator:hover{
+  text-decoration: underline;
+  color: #FFF !important;
+}
+.findomestic-info-green .link .findomestic-view-simulator:hover{
+  text-decoration: underline;
+  color: #00a34f !important;
+}
+
+.findomestic-simulator-footer {
+  width: 100%;
+  text-align: center;
+  padding: 24px;
+  font-size: 12px;
+}
+.findomestic-simulator-footer *{
+  font-size: 12px;
+}
+.findomestic-simulator-footer p{
+  margin-bottom: 0;
+}
+
+
+@media all and (max-width: 800px) {
+  .findomestic-simulator--single-line--only-text .text{
+    flex: 100% !important;
+    margin-bottom: 15px !important;
+  }
+}
+
+@media all and (max-width: 420px) {
+  .findomestic-simulator--single-line--only-text .text{
+    font-size: 14px !important;
+  }
+  .findomestic-simulator--single-line--only-text .text img{
+    width: 86px !important;
+  }
+  .findomestic-simulator--single-line--only-text .link{
+    font-size: 14px !important;
+  }
+
+
+
+  .findomestic-simulator--multiple-lines--only-text .text{
+    text-align: left !important;
+    margin-right: 15px !important;
+    font-size: 16px !important;
+  }
+  .findomestic-simulator--multiple-lines--only-text .text img{
+    width: 86px !important;
+  }
+  .findomestic-simulator--multiple-lines--only-text .link{
+    font-size: 16px !important;
+  }
+
+}
+

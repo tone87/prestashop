@@ -46,16 +46,20 @@ function toggleTestMode() {
   if (isTestModeActive == '1') {
     $('#tvei').parent().parent().hide();
     $('#prf').parent().parent().hide();
+    $('#cod_fin').parent().parent().hide();
     $('#url').parent().parent().hide();
     $('#test_tvei').parent().parent().show();
     $('#test_prf').parent().parent().show();
+    $('#test_cod_fin').parent().parent().show();
     $('#test_url').parent().parent().show();
   } else {
     $('#tvei').parent().parent().show();
     $('#prf').parent().parent().show();
+    $('#cod_fin').parent().parent().show();
     $('#url').parent().parent().show();
     $('#test_tvei').parent().parent().hide();
     $('#test_prf').parent().parent().hide();
+    $('#test_cod_fin').parent().parent().hide();
     $('#test_url').parent().parent().hide();
   }
 }

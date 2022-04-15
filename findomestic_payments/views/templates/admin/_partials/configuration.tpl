@@ -70,12 +70,18 @@
 					<input type="text" name="FINDOMESTIC_TVEI" id="tvei" value="{$findomestic_tvei|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
 				</div>
 			</div>
-      <div class="form-group" {if $findomestic_mode == 1}style="display: none;"{/if}>
-        <label class="control-label col-lg-3 required">{l s='PRF (live mode)' mod='findomestic_payments'}</label>
-        <div class="col-lg-9">
-          <input type="text" name="FINDOMESTIC_PRF" id="prf" value="{$findomestic_prf|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
-        </div>
-      </div>
+            <div class="form-group" {if $findomestic_mode == 1}style="display: none;"{/if}>
+                <label class="control-label col-lg-3 required">{l s='PRF (live mode)' mod='findomestic_payments'}</label>
+                <div class="col-lg-9">
+                    <input type="text" name="FINDOMESTIC_PRF" id="prf" value="{$findomestic_prf|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
+                </div>
+            </div>
+            <div class="form-group" {if $findomestic_mode == 1}style="display: none;"{/if}>
+                <label class="control-label col-lg-3">{l s='Codice finalità (live mode)' mod='findomestic_payments'}</label>
+                <div class="col-lg-9">
+                    <input type="text" name="FINDOMESTIC_COD_FIN" id="cod_fin" value="{$findomestic_cod_fin|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
+                </div>
+            </div>
       <div class="form-group" {if $findomestic_mode == 1}style="display: none;"{/if}>
         <label class="control-label col-lg-3 required">{l s='Url Web app (live mode)' mod='findomestic_payments'}</label>
         <div class="col-lg-9">
@@ -95,16 +101,24 @@
 			</div>
 			<div class="form-group"{if $findomestic_mode == 0}style="display: none;"{/if}>
 				<label class="control-label col-lg-3 required">{l s='PRF (test mode)' mod='findomestic_payments'}</label>
-        <div class="col-lg-9">
-          <input type="text" name="FINDOMESTIC_TEST_PRF" id="test_prf" value="{$findomestic_test_prf|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
-        </div>
+                <div class="col-lg-9">
+                  <input type="text" name="FINDOMESTIC_TEST_PRF" id="test_prf" value="{$findomestic_test_prf|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
+                </div>
 			</div>
-      <div class="form-group"{if $findomestic_mode == 0}style="display: none;"{/if}>
-        <label class="control-label col-lg-3 required">{l s='Url web app (test mode)' mod='findomestic_payments'}</label>
-        <div class="col-lg-9">
-          <input type="text" name="FINDOMESTIC_TEST_URL" id="test_url" value="{$findomestic_test_url|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
-        </div>
-      </div>
+
+            <div class="form-group" {if $findomestic_mode == 0}style="display: none;"{/if}>
+                <label class="control-label col-lg-3">{l s='Codice finalità (test mode)' mod='findomestic_payments'}</label>
+                <div class="col-lg-9">
+                    <input type="text" name="FINDOMESTIC_TEST_COD_FIN" id="test_cod_fin" value="{$findomestic_test_cod_fin|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
+                </div>
+            </div>
+
+          <div class="form-group"{if $findomestic_mode == 0}style="display: none;"{/if}>
+            <label class="control-label col-lg-3 required">{l s='Url web app (test mode)' mod='findomestic_payments'}</label>
+            <div class="col-lg-9">
+              <input type="text" name="FINDOMESTIC_TEST_URL" id="test_url" value="{$findomestic_test_url|escape:'htmlall':'UTF-8'}" class="fixed-width-xxl" size="20" required="required">
+            </div>
+          </div>
 
 
       <div class="form-group">
@@ -118,22 +132,50 @@
         <label class="control-label col-lg-3 required">{l s='Simulazione scheda prodotto' mod='findomestic_payments'}</label>
         <div class="col-lg-9">
           <select type="text" name="FINDOMESTIC_PRODUCT_BUTTON" id="fp_product_button" >
-            <option value="1" {if $findomestic_product_button == 1}selected="selected"{/if}>Attivo </option>
             <option value="0" {if $findomestic_product_button == 0}selected="selected"{/if}>Inattivo </option>
+            <option value="1" {if $findomestic_product_button == 1}selected="selected"{/if}>Solo testo Riga singola </option>
+            <option value="2" {if $findomestic_product_button == 2}selected="selected"{/if}>Solo testo Riga multipla </option>
           </select>
         </div>
       </div>
 
 
-      <div class="form-group">
-        <label class="control-label col-lg-3 required">{l s='Simulazione carrello' mod='findomestic_payments'}</label>
-        <div class="col-lg-9">
-          <select type="text" name="FINDOMESTIC_CART_BUTTON" id="fp_cart_button" >
-            <option value="1" {if $findomestic_cart_button == 1}selected="selected"{/if}>Attivo </option>
-            <option value="0" {if $findomestic_cart_button == 0}selected="selected"{/if}>Inattivo </option>
-          </select>
+        <div class="form-group">
+            <label class="control-label col-lg-3 required">{l s='Simulazione carrello' mod='findomestic_payments'}</label>
+            <div class="col-lg-9">
+                <select type="text" name="FINDOMESTIC_CART_BUTTON" id="fp_cart_button" >
+                    <option value="0" {if $findomestic_cart_button == 0}selected="selected"{/if}>Inattivo </option>
+                    <option value="1" {if $findomestic_cart_button == 1}selected="selected"{/if}>Solo testo Riga singola </option>
+                    <option value="2" {if $findomestic_cart_button == 2}selected="selected"{/if}>Solo testo Riga multipla </option>
+                </select>
+            </div>
         </div>
-      </div>
+
+        <div class="form-group">
+            <label class="control-label col-lg-3 required">{l s='Colore logo' mod='findomestic_payments'}</label>
+            <div class="col-lg-9">
+                <select type="text" name="FINDOMESTIC_LOGO_COLOR" id="fp_logo_color" >
+                    <option value="green" {if $findomestic_logo_color == "green"}selected="selected"{/if}>Logo verde </option>
+                    <option value="negative" {if $findomestic_logo_color == "negative"}selected="selected"{/if}>Logo bianco </option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-lg-3 required">{l s='Colore icona (pagina checkout)' mod='findomestic_payments'}</label>
+            <div class="col-lg-9">
+                <select type="text" name="FINDOMESTIC_ICON_COLOR" id="fp_icon_color" >
+                    <option value="green" {if $findomestic_icon_color == "green"}selected="selected"{/if}>Icona verde </option>
+                    <option value="negative" {if $findomestic_icon_color == "negative"}selected="selected"{/if}>Icona bianca </option>
+                </select>
+            </div>
+        </div>
+            <div class="form-group">
+
+                <label class="control-label col-lg-3">{l s='Testo legal per footer' mod='findomestic_payments'}</label>
+                <div class="col-lg-9">
+                    <textarea name="FINDOMESTIC_LEGAL_TEXT" id="fp_text_legal" class= "autoload_rte" rows="10" cols="45" >{$findomestic_legal_text}</textarea>
+                </div>
+            </div>
 
       <hr>
       <br>

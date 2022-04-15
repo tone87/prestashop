@@ -1,5 +1,4 @@
-<?php
-/**
+{*
 * 2007-2021 PrestaShop
 *
 * NOTICE OF LICENSE
@@ -23,41 +22,18 @@
 
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
-*/
+*}
+<!--</div>  closing div to exit the current block TODO:: another hook should be found -->
 
-namespace PrestaShop\Module\findomestic_payments\Configuration;
+<div class="findomestic-simulator--single-line--only-text findomestic-info-{$color}" >
+  <div class="text">
+    {l s='Pagamento a rate con'  mod='findomestic_payments'} <span><img id="eps" src="{$module_dir|escape:'htmlall':'UTF-8'}views/img/{$color}-logo.svg" alt="{l s='Findomestic' mod='findomestic_payments'}" /></span>
+  </div>
+  <div class="link">
+    <a class="findomestic-view-simulator" href="{$info.url}" target="_blank">
+      {l s='Calcola la rata'  mod='findomestic_payments'}
+    </a>
+  </div>
+</div>
 
-use Context;
-use Configuration;
-use findomestic_payments;
-use Customer;
-use Module;
-use Order;
-use Psr\Container\ContainerInterface;
-use Tools;
-use Product;
-
-/*
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerInterface;
- */
-
-class FPUrlConfiguration
-{
-    public function __construct($url, $tvei, $prf, $cod_fin = '')
-    {
-        $this->baseurl = $url;
-        $this->tvei = $tvei;
-        $this->prf = $prf;
-        $this->cod_fin = $cod_fin;
-    }
-
-    public function getUrl()
-    {
-        $url = $this->baseurl.'?tvei='.$this->tvei.'&prf='.$this->prf;
-        if($this->cod_fin != ''){
-            $url .= '&codice_finalita='.$this->cod_fin;
-        }
-        return $url;
-    }
-}
+<!-- <div>  opening a div again to avoid errors in html -->

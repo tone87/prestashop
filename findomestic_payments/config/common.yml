@@ -14,6 +14,7 @@ services:
           - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_URL")'
           - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TVEI")'
           - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_PRF")'
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_COD_FIN")'
   findomestic_payment_configuration_sandbox:
       class: PrestaShop\Module\findomestic_payments\Configuration\FPUrlConfiguration
       autowire: true
@@ -21,6 +22,7 @@ services:
           - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TEST_URL")'
           - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TEST_TVEI")'
           - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TEST_PRF")'
+          - '@=service("prestashop.adapter.legacy.configuration").get("FINDOMESTIC_TEST_COD_FIN")'
   findomestic_payments_url_generator:
       class: PrestaShop\Module\findomestic_payments\Service\FPUrlGenerator
       autowire: true

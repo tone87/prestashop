@@ -1,5 +1,4 @@
-<?php
-/**
+{*
 * 2007-2021 PrestaShop
 *
 * NOTICE OF LICENSE
@@ -23,41 +22,11 @@
 
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
-*/
+*}
+{$html_content = Tools::htmlentitiesDecodeUTF8($text)}
 
-namespace PrestaShop\Module\findomestic_payments\Configuration;
+<div class="findomestic-simulator-footer footer-lega-text center">
+  <div class="">{$text nofilter}</div>
+</div>
 
-use Context;
-use Configuration;
-use findomestic_payments;
-use Customer;
-use Module;
-use Order;
-use Psr\Container\ContainerInterface;
-use Tools;
-use Product;
 
-/*
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerInterface;
- */
-
-class FPUrlConfiguration
-{
-    public function __construct($url, $tvei, $prf, $cod_fin = '')
-    {
-        $this->baseurl = $url;
-        $this->tvei = $tvei;
-        $this->prf = $prf;
-        $this->cod_fin = $cod_fin;
-    }
-
-    public function getUrl()
-    {
-        $url = $this->baseurl.'?tvei='.$this->tvei.'&prf='.$this->prf;
-        if($this->cod_fin != ''){
-            $url .= '&codice_finalita='.$this->cod_fin;
-        }
-        return $url;
-    }
-}
