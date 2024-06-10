@@ -71,9 +71,7 @@ class findomestic_paymentsRespondModuleFrontController extends AbstractRestContr
             $url_lang = '/' . $this->context->language->iso_code;
         }
 
-        $redirect_url = _PS_BASE_URL_ . $url_lang . '/order-confirmation?id_cart=' . $unencoded['id_cart'] . '&id_module=' . $unencoded['id_module'] . '&id_order=' . $unencoded['id_order'] . '&key=' . $unencoded['key'];
-
-        Tools::redirect($redirect_url);
+        Tools::redirectLink(__PS_BASE_URI__.'order-confirmation.php?id_cart=' . $unencoded['id_cart'] . '&id_module=' . $unencoded['id_module'] . '&id_order=' . $unencoded['id_order'] . '&key=' . $unencoded['key']);
 
         exit;
     }
