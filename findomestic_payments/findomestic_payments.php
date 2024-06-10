@@ -76,6 +76,7 @@ class findomestic_payments extends PaymentModule
         $this->tab = 'payments_gateways';
         $this->version = '1.0.1';
         $this->author = 'Doing';
+        $this->bootstrap = true;
 
         //$this->controllers = array('confirmation');
 
@@ -511,7 +512,7 @@ class findomestic_payments extends PaymentModule
             )
         );
 
-        return $this->display($this->_path, 'views/templates/admin/main.tpl');
+        return $this->display($this->_path, 'views/templates/admin/_partials/configuration.tpl');
     }
 
     /**
